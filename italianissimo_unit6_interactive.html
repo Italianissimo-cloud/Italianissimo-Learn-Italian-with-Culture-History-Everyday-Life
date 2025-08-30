@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Italianissimo — Unit 6: Appuntamenti (Multi-Level Interactive Practice)</title>
+<meta name="description" content="Interactive multi-level Italian practice for English speakers — appointments, dates & times, telephone language, articulated prepositions, reflexive & reciprocal verbs, imperatives, and reading comprehension." />
+<style>
+  :root{
+    --bg:#0f172a; --panel:#0b1326; --card:#111827; --ink:#e5e7eb; --muted:#9ca3af;
+    --accent:#22d3ee; --accent2:#a78bfa; --good:#34d399; --bad:#f87171; --warn:#fbbf24;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    color:var(--ink); background: radial-gradient(1200px 900px at 5% 0%, #0b1220, var(--bg)) no-repeat fixed;
+    line-height:1.6;
+  }
+  header{ text-align:center; padding: clamp(18px,4vw,48px) 16px 8px }
+  h1{ margin:0 0 6px; font-size: clamp(1.5rem, 3.5vw, 2.4rem) }
+  .sub{ color:var(--muted); max-width:1000px; margin: 0 auto }
+  .wrap{ max-width:1100px; margin: 20px auto 80px; padding: 0 16px }
+  .bar{
+    display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin: 18px 0 12px;
+  }
+  .tab{
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.12);
+    color:var(--ink); padding:8px 12px; border-radius:12px; cursor:pointer; font-weight:700;
+  }
+  .tab[aria-selected="true"]{ outline:2px solid var(--accent2) }
+  .panel{
+    display:none; background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    border:1px solid rgba(255,255,255,.08); border-radius:18px; overflow:clip; box-shadow:0 10px 30px rgba(0,0,0,.35);
+    margin-bottom: 18px;
+  }
+  .panel.active{ display:block }
+  .panel header{
+    text-align:left; padding: 16px; background: rgba(255,255,255,.03); border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .panel header h2{ margin:0; font-size:1.1rem }
+  .content{ padding: 16px; display:grid; gap:16px }
+  .card{
+    background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08);
+    border-radius:14px; padding: 14px;
+  }
+  .grid{ display:grid; gap:12px }
+  .grid.cols-2{ grid-template-columns: repeat(auto-fit, minmax(260px,1fr)) }
+  .grid.cols-3{ grid-template-columns: repeat(auto-fit, minmax(220px,1fr)) }
+  label.option{
+    display:flex; gap:10px; align-items:flex-start; padding:10px 12px;
+    background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:10px; cursor:pointer;
+  }
+  input[type="radio"], input[type="checkbox"]{ transform: translateY(3px) }
+  input[type="text"]{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:#0b1220; color:var(--ink) }
+  select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:#0b1220; color:var(--ink) }
+  .actions{ display:flex; gap:10px; flex-wrap:wrap; padding-top:6px }
+  button{
+    border:1px solid rgba(255,255,255,.2); background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color:#04131a; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
+  }
+  button.secondary{ background:transparent; color:var(--ink) }
+  .badge{ display:inline-block; padding:4px 10px; border-radius:999px; font-weight:800; border:1px solid rgba(255,255,255,.2) }
+  .good{ color:#042615; background:linear-gradient(90deg,rgba(52,211,153,.25),rgba(34,197,94,.18)); border-color:rgba(52,211,153,.45) }
+  .bad{ color:#2b0c0c; background:linear-gradient(90deg,rgba(248,113,113,.25),rgba(239,68,68,.18)); border-color:rgba(248,113,113,.45) }
+  .muted{ color:var(--muted) }
+  .explain{ margin-top:8px; color:var(--muted); border-left:3px solid rgba(255,255,255,.2); padding-left:10px }
+  .scoreRow{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:8px; border-top:1px dashed rgba(255,255,255,.15); padding-top:8px }
+  .keypad button{ background:#0b1220; border:1px solid rgba(255,255,255,.2); color:var(--ink) }
+  .draggable{ padding:10px 12px; border:1px dashed rgba(255,255,255,.25); border-radius:10px; background:rgba(255,255,255,.02); cursor:grab }
+  .dropzone{ min-height:44px; padding:10px; border:2px dashed rgba(255,255,255,.25); border-radius:12px; background:rgba(255,255,255,.02) }
+  .row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+  footer{ text-align:center; color:var(--muted); padding: 24px 16px 60px }
+  .progress{ height:10px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden }
+  .progress > div{ height:100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); width:0% }
+</style>
+</head>
+<body>
+<header>
+  <h1>Italianissimo — Unit 6: <em>Appuntamenti</em></h1>
+  <p class="sub">Multi-level interactive practice for English speakers. Topics: appointments, dates & times, telephone language, articulated prepositions, reflexive/reciprocal verbs, more irregular verbs, imperatives, and reading. <em>Ascolta, leggi, esercitati!</em></p>
+</header>
+
+<div class="wrap">
+  <div class="bar" role="tablist" aria-label="Practice levels">
+    <button class="tab" role="tab" aria-selected="true" aria-controls="p1" id="t1">A1 — Days, Dates & Seasons</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p2" id="t2">A2 — Telephone Language</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p3" id="t3">B1 — Articulated Prepositions</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p4" id="t4">B1 — Reflexive & Reciprocal</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p5" id="t5">B1 — Imperatives</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="p6" id="t6">B1 — Reading: La domenica in Italia</button>
+  </div>
+
+  <div class="progress" aria-label="Overall progress">
+    <div id="overallProgress"></div>
+  </div>
+
+  <!-- Panel 1 -->
+  <section class="panel active" id="p1" role="tabpanel" aria-labelledby="t1">
+    <header><h2>A1 — Days, Dates, Seasons & Time Words</h2></header>
+    <div class="content grid cols-2">
+      <div class="card">
+        <h3>1) Multiple Choice — Days & Routine Words</h3>
+        <p class="muted">Choose the best option.</p>
+        <div id="p1q1" class="grid">
+          <!-- options injected -->
+        </div>
+        <div class="actions">
+          <button data-check="p1q1">Check</button>
+          <button class="secondary" data-reset="p1q1">Reset</button>
+          <span class="badge" id="p1q1score"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2) Fill-in — Talk about dates</h3>
+        <p class="muted">Type the Italian. Tip: article + day/month as needed.</p>
+        <div class="keypad row" aria-label="Italian accents keypad">
+          <button type="button" data-ins="à">à</button>
+          <button type="button" data-ins="è">è</button>
+          <button type="button" data-ins="é">é</button>
+          <button type="button" data-ins="ì">ì</button>
+          <button type="button" data-ins="ò">ò</button>
+          <button type="button" data-ins="ù">ù</button>
+        </div>
+        <div class="grid">
+          <label>“next month” <input type="text" id="p1f1" placeholder=""/></label>
+          <label>“last year” <input type="text" id="p1f2" placeholder=""/></label>
+          <label>“tomorrow morning” <input type="text" id="p1f3" placeholder=""/></label>
+          <label>“yesterday afternoon” <input type="text" id="p1f4" placeholder=""/></label>
+          <label>Write the date: “17 June” (as used in the unit) <input type="text" id="p1f5" placeholder=""/></label>
+        </div>
+        <div class="actions">
+          <button data-check-fill="p1f">Check</button>
+          <button class="secondary" data-reset-fill="p1f">Reset</button>
+          <span class="badge" id="p1fillscore"></span>
+        </div>
+        <div class="explain">
+          <strong>Notes:</strong> <em>la settimana prossima</em>, <em>il mese prossimo</em>, <em>l'anno scorso</em>/<em>lo scorso anno</em>, <em>domani mattina</em>, <em>ieri pomeriggio</em>, dates: <em>il diciassette giugno</em>.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3) Match — Seasons → Preposition</h3>
+        <p class="muted">Drag each season into the box with the correct preposition from the unit (“in”).</p>
+        <div class="grid cols-3">
+          <div>
+            <div class="dropzone" data-target="inverno">in inverno</div>
+            <div class="dropzone" data-target="primavera">in primavera</div>
+          </div>
+          <div>
+            <div class="dropzone" data-target="estate">in estate</div>
+            <div class="dropzone" data-target="autunno">in autunno</div>
+          </div>
+          <div>
+            <div class="draggable" draggable="true" data-key="primavera">la primavera</div>
+            <div class="draggable" draggable="true" data-key="inverno">l’inverno</div>
+            <div class="draggable" draggable="true" data-key="autunno">l’autunno</div>
+            <div class="draggable" draggable="true" data-key="estate">l’estate</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button data-check-dnd="p1dnd">Check</button>
+          <button class="secondary" data-reset-dnd="p1dnd">Reset</button>
+          <span class="badge" id="p1dndscore"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 2 -->
+  <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2">
+    <header><h2>A2 — Telephone Language (Dialogue 1)</h2></header>
+    <div class="content grid cols-2">
+      <div class="card">
+        <h3>1) Recognize Key Phrases</h3>
+        <p class="muted">Match the Italian to its English meaning (click the correct pair).</p>
+        <div id="p2match" class="grid cols-3"></div>
+        <div class="actions">
+          <button data-check-match="p2match">Check</button>
+          <button class="secondary" data-reset-match="p2match">Reset</button>
+          <span class="badge" id="p2matchscore"></span>
+        </div>
+        <div class="explain">From the call: <em>Pronto… Chi parla? … Le passo il signor Rossi … Arrivederci alla settimana prossima.</em></div>
+      </div>
+
+      <div class="card">
+        <h3>2) Fill in the Dialogue</h3>
+        <p class="muted">Type the missing words from Dialogue 1.</p>
+        <div class="grid">
+          <label>“_____, ditta Rossi?” <input id="p2f1" type="text" /></label>
+          <label>“Sì, buongiorno. ____?” <input id="p2f2" type="text" /></label>
+          <label>“Chi ____?” <input id="p2f3" type="text" /></label>
+          <label>“Le ____ subito il signor Rossi.” <input id="p2f4" type="text" /></label>
+          <label>“Quando Le va ____?” <input id="p2f5" type="text" /></label>
+          <label>“Mercoledì sera, se Lei è libera, ____ a cena …” <input id="p2f6" type="text" /></label>
+        </div>
+        <div class="actions">
+          <button data-check-fill="p2f">Check</button>
+          <button class="secondary" data-reset-fill="p2f">Reset</button>
+          <span class="badge" id="p2fillscore"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3) Emergency Numbers — Quick Quiz</h3>
+        <div id="p2q3" class="grid">
+          <!-- injected -->
+        </div>
+        <div class="actions">
+          <button data-check="p2q3">Check</button>
+          <button class="secondary" data-reset="p2q3">Reset</button>
+          <span class="badge" id="p2q3score"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 3 -->
+  <section class="panel" id="p3" role="tabpanel" aria-labelledby="t3">
+    <header><h2>B1 — Articulated Prepositions</h2></header>
+    <div class="content grid cols-2">
+      <div class="card">
+        <h3>1) Gym Brochure Gaps (Exercise 4 — Part 1)</h3>
+        <p class="muted">Choose the correct articulated preposition.</p>
+        <div class="grid">
+          <label>Biblioteca (su) <select id="p3a1">
+            <option value="">—</option><option>sulla</option><option>sul</option><option>sulle</option><option>sugli</option>
+          </select> salute e (su) <select id="p3a2">
+            <option value="">—</option><option>sullo</option><option>sugli</option><option>sul</option><option>sulla</option>
+          </select> sport</label>
+
+          <label>La possibilità (in) <select id="p3a3">
+            <option value="">—</option><option>nella</option><option>nel</option><option>nei</option>
+          </select> bella stagione di allenarsi (a) <select id="p3a4">
+            <option value="">—</option><option>all'</option><option>al</option><option>alla</option>
+          </select> aperto tra il verde</label>
+
+          <label>Orario: (da) <select id="p3a5">
+            <option value="">—</option><option>dal</option><option>dalla</option>
+          </select> lunedì (a) <select id="p3a6">
+            <option value="">—</option><option>al</option><option>alla</option>
+          </select> venerdì (da) <select id="p3a7">
+            <option value="">—</option><option>dalle</option><option>dal</option>
+          </select> ore 9.00 (a) <select id="p3a8">
+            <option value="">—</option><option>alle</option><option>ai</option>
+          </select> ore 21.15</label>
+
+          <label>Il sabato (da) <select id="p3a9">
+            <option value="">—</option><option>dalle</option><option>dal</option>
+          </select> ore 10.00 (a) <select id="p3a10">
+            <option value="">—</option><option>alle</option><option>ai</option>
+          </select> ore 12.30</label>
+        </div>
+        <div class="actions">
+          <button id="p3check1">Check</button>
+          <button class="secondary" id="p3reset1">Reset</button>
+          <span class="badge" id="p3score1"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2) Restaurant Ad (Exercise 4 — Part 2)</h3>
+        <p class="muted">Complete with the correct articulated preposition.</p>
+        <div class="grid">
+          <label>Per il pranzo (in) <select id="p3b1">
+            <option value="">—</option><option>in</option><option>nel</option>
+          </select> corso (di) <select id="p3b2">
+            <option value="">—</option><option>del</option><option>della</option>
+          </select> intervallo di lavoro</label>
+
+          <label>per la cena che segue (a) <select id="p3b3">
+            <option value="">—</option><option>allo</option><option>al</option><option>alla</option>
+          </select> shopping</label>
+
+          <label>per ritrovarsi con gli amici prima (di) <select id="p3b4">
+            <option value="">—</option><option>dello</option><option>del</option>
+          </select> spettacolo</label>
+
+          <label>in una sala (di) <select id="p3b5">
+            <option value="">—</option><option>del</option><option>della</option>
+          </select> centro</label>
+
+          <label>fra una scoperta e l’altra (in) <select id="p3b6">
+            <option value="">—</option><option>nella</option><option>nel</option>
+          </select> la città in cui si fa turismo …</label>
+        </div>
+        <div class="actions">
+          <button id="p3check2">Check</button>
+          <button class="secondary" id="p3reset2">Reset</button>
+          <span class="badge" id="p3score2"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 4 -->
+  <section class="panel" id="p4" role="tabpanel" aria-labelledby="t4">
+    <header><h2>B1 — Reflexive & Reciprocal Verbs</h2></header>
+    <div class="content grid cols-2">
+      <div class="card">
+        <h3>1) Order the Morning Routine (Exercise 5)</h3>
+        <p class="muted">Drag to reorder (top = first action). Doppio click su una riga per portarla in alto.</p>
+        <div id="orderList" class="grid">
+          <div class="draggable" draggable="true" data-id="1">Mi pettino.</div>
+          <div class="draggable" draggable="true" data-id="2">Non mi alzo subito.</div>
+          <div class="draggable" draggable="true" data-id="3">Mi vesto.</div>
+          <div class="draggable" draggable="true" data-id="4">Vado in bagno.</div>
+          <div class="draggable" draggable="true" data-id="5">Mi sveglio alle sette.</div>
+          <div class="draggable" draggable="true" data-id="6">Mi lavo.</div>
+        </div>
+        <div class="actions">
+          <button id="p4check1">Check</button>
+          <button class="secondary" id="p4reset1">Reset</button>
+          <span class="badge" id="p4score1"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2) Identify Reflexive/Reciprocal</h3>
+        <p class="muted">Choose if the sentence is reflexive (R) or reciprocal (Rec).</p>
+        <div id="p4q2" class="grid">
+          <!-- injected -->
+        </div>
+        <div class="actions">
+          <button data-check="p4q2">Check</button>
+          <button class="secondary" data-reset="p4q2">Reset</button>
+          <span class="badge" id="p4q2score"></span>
+        </div>
+        <div class="explain">Recall: <em>ci vediamo / ci sentiamo</em> (we’ll see/speak to each other), <em>Non si parlano</em> (they don’t talk to each other).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 5 -->
+  <section class="panel" id="p5" role="tabpanel" aria-labelledby="t5">
+    <header><h2>B1 — Imperatives (Formal & Informal)</h2></header>
+    <div class="content grid cols-2">
+      <div class="card">
+        <h3>1) Formal vs Informal</h3>
+        <p class="muted">Pick the correct imperative form for the context.</p>
+        <div id="p5q1" class="grid">
+          <!-- injected -->
+        </div>
+        <div class="actions">
+          <button data-check="p5q1">Check</button>
+          <button class="secondary" data-reset="p5q1">Reset</button>
+          <span class="badge" id="p5q1score"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2) Negative Imperatives</h3>
+        <p class="muted">Choose the correct negative imperative.</p>
+        <div id="p5q2" class="grid">
+          <!-- injected -->
+        </div>
+        <div class="actions">
+          <button data-check="p5q2">Check</button>
+          <button class="secondary" data-reset="p5q2">Reset</button>
+          <span class="badge" id="p5q2score"></span>
+        </div>
+        <div class="explain">Note: <em>tu</em> negative usa <strong>non + infinito</strong> (es. <em>Non girare</em>), mentre il formale usa il verbo finito (es. <em>Non giri</em>).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel 6 -->
+  <section class="panel" id="p6" role="tabpanel" aria-labelledby="t6">
+    <header><h2>B1 — Reading: <em>La domenica in Italia</em></h2></header>
+    <div class="content grid cols-2">
+      <div class="card">
+        <h3>1) Reading (excerpt)</h3>
+        <p class="muted">Read and answer the questions.</p>
+        <div class="card" style="background:rgba(255,255,255,.02)">
+          <p><em>La domenica è un giorno molto importante per gli Italiani... In inverno dalle città del nord c’è l’esodo verso la montagna per sciare; invece d’estate sono il mare e la campagna che attirano i gitanti.</em></p>
+        </div>
+        <div id="p6q" class="grid">
+          <!-- injected -->
+        </div>
+        <div class="actions">
+          <button data-check="p6q">Check</button>
+          <button class="secondary" data-reset="p6q">Reset</button>
+          <span class="badge" id="p6qscore"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2) Short Answer</h3>
+        <p class="muted">Type a short answer in English.</p>
+        <label>Why is Saturday difficult for families to be together? <input id="p6f1" type="text" /></label>
+        <label>Name one popular Sunday destination in summer. <input id="p6f2" type="text" /></label>
+        <div class="actions">
+          <button id="p6check2">Check</button>
+          <button class="secondary" id="p6reset2">Reset</button>
+          <span class="badge" id="p6score2"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="card">
+    <div class="scoreRow">
+      <strong>Total Score</strong>
+      <span id="totalBadge" class="badge">0%</span>
+      <button id="exportBtn" class="secondary">Export Results (JSON)</button>
+    </div>
+  </div>
+</div>
+
+<footer>Made with ♥ for <strong>Italianissimo</strong> — Unit 6 multi-level practice. Tip: use the accents keypad when typing.</footer>
+
+<script>
+// Utility state
+const state = {
+  completed: new Set(),
+  points: {} // key -> {correct, total}
+};
+
+function updateOverall(){
+  // compute overall percent via accumulated points
+  let c=0,t=0;
+  Object.values(state.points).forEach(v=>{ c+=v.correct; t+=v.total; });
+  const pct = t ? Math.round((c/t)*100) : 0;
+  document.getElementById('totalBadge').textContent = pct + '%';
+  const bar = document.getElementById('overallProgress');
+  bar.style.width = pct + '%';
+}
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected','false'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    tab.setAttribute('aria-selected','true');
+    document.getElementById(tab.getAttribute('aria-controls')).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// Accents keypad
+let activeInput = null;
+document.addEventListener('focusin', (e)=>{
+  if (e.target.tagName === 'INPUT' && e.target.type === 'text') activeInput = e.target;
+});
+document.querySelectorAll('.keypad [data-ins]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if (!activeInput) return;
+    const s = activeInput.selectionStart, val = activeInput.value, ins = btn.dataset.ins;
+    activeInput.value = val.slice(0,s) + ins + val.slice(s);
+    activeInput.focus();
+    activeInput.selectionStart = activeInput.selectionEnd = s + ins.length;
+  });
+});
+
+// Panel 1 — Q1 (MCQ)
+const P1Q1 = [
+  {q:"“the day after tomorrow”", opts:["l’altro ieri","dopodomani","domani"], a:1},
+  {q:"“next week”", opts:["la settimana scorsa","la settimana prossima","ogni settimana"], a:1},
+  {q:"“daily (adv.)”", opts:["ogni giorno","quotidiano","il giorno dopo"], a:0},
+  {q:"“the next day (narration)”", opts:["il giorno dopo","l’indomani","il giorno prima"], a:1},
+  {q:"Pick the masculine noun", opts:["settimana","mattina","mese"], a:2}
+];
+function renderP1Q1(){
+  const host = document.getElementById('p1q1'); host.innerHTML = '';
+  P1Q1.forEach((item,idx)=>{
+    const wrap = document.createElement('div'); wrap.className='card';
+    const title = document.createElement('div'); title.innerHTML = '<strong>Q'+(idx+1)+':</strong> '+item.q; wrap.appendChild(title);
+    item.opts.forEach((o,i)=>{
+      const id = 'p1q1_'+idx+'_'+i;
+      const lab = document.createElement('label'); lab.className='option'; lab.setAttribute('for', id);
+      const input = document.createElement('input'); input.type='radio'; input.name='p1q1_'+idx; input.id=id; input.value=i;
+      const span = document.createElement('span'); span.textContent = o;
+      lab.appendChild(input); lab.appendChild(span); wrap.appendChild(lab);
+    });
+    host.appendChild(wrap);
+  });
+}
+renderP1Q1();
+
+document.querySelector('[data-check="p1q1"]').addEventListener('click', ()=>{
+  let total=0,correct=0;
+  P1Q1.forEach((it,idx)=>{
+    total++;
+    const chosen = document.querySelector('input[name="p1q1_'+idx+'"]:checked');
+    if (chosen && Number(chosen.value)===it.a) correct++;
+  });
+  document.getElementById('p1q1score').textContent = correct+' / '+total;
+  document.getElementById('p1q1score').className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p1q1 = {correct,total}; updateOverall();
+});
+document.querySelector('[data-reset="p1q1"]').addEventListener('click', ()=>{
+  document.getElementById('p1q1').querySelectorAll('input[type="radio"]').forEach(i=>i.checked=false);
+  document.getElementById('p1q1score').textContent='';
+  delete state.points.p1q1; updateOverall();
+});
+
+// Panel 1 — Fill set
+const P1F_ANS = {
+  p1f1: ['il mese prossimo','il prossimo mese'],
+  p1f2: ['l\'anno scorso','lo scorso anno'],
+  p1f3: ['domani mattina'],
+  p1f4: ['ieri pomeriggio'],
+  p1f5: ['il diciassette giugno']
+};
+document.querySelector('[data-check-fill="p1f"]').addEventListener('click', ()=>{
+  let total=0,correct=0;
+  for (const id in P1F_ANS){
+    total++;
+    const val = document.getElementById(id).value.trim().toLowerCase();
+    const ok = P1F_ANS[id].some(a=>a===val);
+    if (ok) correct++;
+  }
+  const badge = document.getElementById('p1fillscore');
+  badge.textContent = correct+' / '+total; badge.className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p1fill = {correct,total}; updateOverall();
+});
+document.querySelector('[data-reset-fill="p1f"]').addEventListener('click', ()=>{
+  Object.keys(P1F_ANS).forEach(id=>document.getElementById(id).value='');
+  const badge = document.getElementById('p1fillscore'); badge.textContent='';
+  delete state.points.p1fill; updateOverall();
+});
+
+// Drag & Drop helpers
+let dragEl=null;
+document.querySelectorAll('.draggable').forEach(el=>{
+  el.addEventListener('dragstart', e=>{ dragEl = el; el.style.opacity=.6; });
+  el.addEventListener('dragend', e=>{ dragEl = null; el.style.opacity=1; });
+});
+document.querySelectorAll('.dropzone').forEach(dz=>{
+  dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.style.background='rgba(34,211,238,.12)'; });
+  dz.addEventListener('dragleave', e=>{ dz.style.background=''; });
+  dz.addEventListener('drop', e=>{ e.preventDefault(); dz.style.background=''; if(dragEl) dz.textContent = dz.textContent.split(' ')[0]+' '+dragEl.textContent; dz.dataset.filled = dragEl.dataset.key; });
+});
+document.querySelector('[data-check-dnd="p1dnd"]').addEventListener('click', ()=>{
+  const map = {'inverno':'inverno','primavera':'primavera','estate':'estate','autunno':'autunno'};
+  let total=0,correct=0;
+  document.querySelectorAll('#p1 .dropzone').forEach(d=>{
+    if (['inverno','primavera','estate','autunno'].includes(d.dataset.target)){
+      total++; if (d.dataset.filled===map[d.dataset.target]) correct++;
+    }
+  });
+  const badge = document.getElementById('p1dndscore');
+  badge.textContent = correct+' / '+total; badge.className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p1dnd = {correct,total}; updateOverall();
+});
+document.querySelector('[data-reset-dnd="p1dnd"]').addEventListener('click', ()=>{
+  document.querySelectorAll('#p1 .dropzone').forEach(d=>{ d.textContent = d.textContent.split(' ')[0]+' '+d.dataset.target; d.dataset.filled=''; });
+  const badge = document.getElementById('p1dndscore'); badge.textContent='';
+  delete state.points.p1dnd; updateOverall();
+});
+
+// Panel 2 — Match phrases
+const P2_MATCH = {
+  left: ["Pronto","Chi parla?","Le passo il signor Rossi.","Arrivederci alla settimana prossima."],
+  right:["Who’s calling?","Goodbye, see you next week.","Hello (on the phone).","I’m putting you through to Mr Rossi."]
+};
+function renderP2Match(){
+  const host = document.getElementById('p2match'); host.innerHTML='';
+  const L = P2_MATCH.left.map((t,i)=>({t, i, type:'L'}));
+  const R = P2_MATCH.right.map((t,i)=>({t, i, type:'R'})).sort(()=>Math.random()-0.5);
+  const all = L.concat(R);
+  all.forEach(item=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='tab'; b.textContent=item.t; b.dataset.type=item.type; b.dataset.idx=item.i;
+    host.appendChild(b);
+  });
+  let sel=[];
+  host.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      b.classList.toggle('selected');
+      if (b.classList.contains('selected')) sel.push(b);
+      else sel = sel.filter(x=>x!==b);
+      if (sel.length===2){
+        // Check pair
+        const [a,bx] = sel;
+        const ok = a.dataset.type!==bx.dataset.type && a.dataset.idx===bx.dataset.idx;
+        [a,bx].forEach(el=>{
+          el.style.outline = ok ? '2px solid #34d399' : '2px solid #f87171';
+          el.disabled = ok;
+          el.classList.remove('selected');
+        });
+        sel=[];
+      }
+    });
+  });
+}
+renderP2Match();
+
+document.querySelector('[data-check-match="p2match"]').addEventListener('click', ()=>{
+  const buttons = document.querySelectorAll('#p2match button');
+  const disabled = Array.from(buttons).filter(b=>b.disabled).length/2;
+  const total = P2_MATCH.left.length;
+  const badge = document.getElementById('p2matchscore');
+  badge.textContent = disabled+' / '+total; badge.className = 'badge ' + (disabled/total>=0.6?'good':'bad');
+  state.points.p2match = {correct:disabled,total}; updateOverall();
+});
+document.querySelector('[data-reset-match="p2match"]').addEventListener('click', ()=>{
+  renderP2Match(); const badge = document.getElementById('p2matchscore'); badge.textContent='';
+  delete state.points.p2match; updateOverall();
+});
+
+// Panel 2 — Fill dialogue
+const P2F = {
+  p2f1:'pronto', p2f2:'desidera', p2f3:'parla', p2f4:'passo', p2f5:'bene', p2f6:'venga'
+};
+document.querySelector('[data-check-fill="p2f"]').addEventListener('click', ()=>{
+  let total=0,correct=0;
+  for (const id in P2F){
+    total++;
+    const val = document.getElementById(id).value.trim().toLowerCase();
+    if (val===P2F[id]) correct++;
+  }
+  const badge = document.getElementById('p2fillscore');
+  badge.textContent = correct+' / '+total; badge.className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p2fill = {correct,total}; updateOverall();
+});
+document.querySelector('[data-reset-fill="p2f"]').addEventListener('click', ()=>{
+  Object.keys(P2F).forEach(id=>document.getElementById(id).value='');
+  const badge = document.getElementById('p2fillscore'); badge.textContent='';
+  delete state.points.p2fill; updateOverall();
+});
+
+// Panel 2 — Emergency numbers
+const P2Q3 = [
+  {q:"Fire brigade — pronto intervento", opts:["112","115","118"], a:1},
+  {q:"Carabinieri — pronto intervento", opts:["113","112","115"], a:1},
+  {q:"Autoambulanza / Emergenza sanitaria", opts:["118","803.116","113"], a:0},
+  {q:"Soccorso stradale (roadside assistance)", opts:["803.116","112","118"], a:0},
+  {q:"Telefono azzurro — bambini (toll-free)", opts:["1.96.96","19696","116"], a:0}
+];
+function renderP2Q3(){
+  const host = document.getElementById('p2q3'); host.innerHTML='';
+  P2Q3.forEach((it,idx)=>{
+    const wrap = document.createElement('div'); wrap.className='card';
+    wrap.innerHTML = '<strong>Q'+(idx+1)+':</strong> '+it.q;
+    it.opts.forEach((o,i)=>{
+      const id = 'p2q3_'+idx+'_'+i;
+      const lab = document.createElement('label'); lab.className='option'; lab.setAttribute('for', id);
+      const input = document.createElement('input'); input.type='radio'; input.name='p2q3_'+idx; input.id=id; input.value=i;
+      const span = document.createElement('span'); span.textContent=o;
+      lab.appendChild(input); lab.appendChild(span); wrap.appendChild(lab);
+    });
+    host.appendChild(wrap);
+  });
+}
+renderP2Q3();
+document.querySelector('[data-check="p2q3"]').addEventListener('click', ()=>{
+  let total=0,correct=0;
+  P2Q3.forEach((it,idx)=>{
+    total++;
+    const chosen = document.querySelector('input[name="p2q3_'+idx+'"]:checked');
+    if (chosen && Number(chosen.value)===it.a) correct++;
+  });
+  const badge = document.getElementById('p2q3score');
+  badge.textContent = correct+' / '+total; badge.className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p2q3 = {correct,total}; updateOverall();
+});
+document.querySelector('[data-reset="p2q3"]').addEventListener('click', ()=>{
+  document.querySelectorAll('#p2q3 input[type="radio"]').forEach(i=>i.checked=false);
+  const badge = document.getElementById('p2q3score'); badge.textContent='';
+  delete state.points.p2q3; updateOverall();
+});
+
+// Panel 3 — Prepositions checks
+document.getElementById('p3check1').addEventListener('click', ()=>{
+  const ans = {p3a1:'sulla', p3a2:'sullo', p3a3:'nella', p3a4:"all'", p3a5:'dal', p3a6:'al', p3a7:'dalle', p3a8:'alle', p3a9:'dalle', p3a10:'alle'};
+  let total=0,correct=0;
+  for (const k in ans){
+    total++;
+    const v = document.getElementById(k).value;
+    if (v===ans[k]) correct++;
+  }
+  const badge = document.getElementById('p3score1'); badge.textContent = correct+' / '+total; badge.className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p3a = {correct,total}; updateOverall();
+});
+document.getElementById('p3reset1').addEventListener('click', ()=>{
+  ['p3a1','p3a2','p3a3','p3a4','p3a5','p3a6','p3a7','p3a8','p3a9','p3a10'].forEach(id=>document.getElementById(id).value='');
+  const badge = document.getElementById('p3score1'); badge.textContent='';
+  delete state.points.p3a; updateOverall();
+});
+
+document.getElementById('p3check2').addEventListener('click', ()=>{
+  // Correct answers aligned with options in the selects
+  const ans = {p3b1:'in', p3b2:'del', p3b3:'allo', p3b4:'dello', p3b5:'del', p3b6:'nella'};
+  let total=0,correct=0;
+  for (const k in ans){
+    total++;
+    let v = document.getElementById(k).value;
+    if (v===ans[k]) correct++;
+  }
+  const badge = document.getElementById('p3score2'); badge.textContent = correct+' / '+total; badge.className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p3b = {correct,total}; updateOverall();
+});
+document.getElementById('p3reset2').addEventListener('click', ()=>{
+  ['p3b1','p3b2','p3b3','p3b4','p3b5','p3b6'].forEach(id=>document.getElementById(id).value='');
+  const badge = document.getElementById('p3score2'); badge.textContent='';
+  delete state.points.p3b; updateOverall();
+});
+
+// Panel 4 — Order list check
+function currentOrderIds(){
+  return Array.from(document.querySelectorAll('#orderList .draggable')).map(el=>el.dataset.id);
+}
+document.querySelectorAll('#orderList .draggable').forEach(el=>{
+  el.addEventListener('dragover', e=>e.preventDefault());
+  el.addEventListener('drop', e=>e.preventDefault());
+});
+// semplice “riordina”: doppio click porta l’elemento in cima
+document.querySelectorAll('#orderList .draggable').forEach(el=>{
+  el.addEventListener('dblclick', ()=>{
+    const parent = document.getElementById('orderList');
+    parent.insertBefore(el, parent.firstChild);
+  });
+});
+document.getElementById('p4check1').addEventListener('click', ()=>{
+  const correctOrder = ['5','2','4','6','1','3']; // sveglia → non alzarsi subito → bagno → lavarsi → pettinarsi → vestirsi
+  const got = currentOrderIds();
+  let correct=0; for (let i=0;i<correctOrder.length;i++){ if (got[i]===correctOrder[i]) correct++; }
+  const total = correctOrder.length;
+  const badge = document.getElementById('p4score1'); badge.textContent = correct+' / '+total; badge.className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p4order = {correct,total}; updateOverall();
+});
+document.getElementById('p4reset1').addEventListener('click', ()=>{
+  const parent = document.getElementById('orderList');
+  const ids = ['1','2','3','4','5','6'];
+  ids.forEach(id=> parent.appendChild(Array.from(parent.children).find(el=>el.dataset.id===id)));
+  const badge = document.getElementById('p4score1'); badge.textContent='';
+  delete state.points.p4order; updateOverall();
+});
+
+// Panel 4 — R vs Rec
+const P4Q2 = [
+  {q:"Dove ci troviamo?", a:'Rec'},
+  {q:"Mi sveglio alle sette.", a:'R'},
+  {q:"Non si parlano.", a:'Rec'},
+  {q:"Ci vediamo ogni sabato.", a:'Rec'},
+  {q:"Mi vesto.", a:'R'}
+];
+function renderP4Q2(){
+  const host = document.getElementById('p4q2'); host.innerHTML='';
+  P4Q2.forEach((it,idx)=>{
+    const wrap = document.createElement('div'); wrap.className='card';
+    const title = document.createElement('div'); title.innerHTML='<strong>Q'+(idx+1)+':</strong> '+it.q; wrap.appendChild(title);
+    ['R','Rec'].forEach((lab,i)=>{
+      const id = 'p4q2_'+idx+'_'+i;
+      const lb = document.createElement('label'); lb.className='option'; lb.setAttribute('for', id);
+      const input = document.createElement('input'); input.type='radio'; input.name='p4q2_'+idx; input.id=id; input.value=lab;
+      const span = document.createElement('span'); span.textContent = (lab==='R'?'Reflexive':'Reciprocal');
+      lb.appendChild(input); lb.appendChild(span); wrap.appendChild(lb);
+    });
+    host.appendChild(wrap);
+  });
+}
+renderP4Q2();
+document.querySelector('[data-check="p4q2"]').addEventListener('click', ()=>{
+  let total=0,correct=0;
+  P4Q2.forEach((it,idx)=>{
+    total++;
+    const chosen = document.querySelector('input[name="p4q2_'+idx+'"]:checked');
+    if (chosen && chosen.value===it.a) correct++;
+  });
+  const badge = document.getElementById('p4q2score'); badge.textContent = correct+' / '+total; badge.className = 'badge ' + (correct/total>=0.6?'good':'bad');
+  state.points.p4q2 = {correct,total}; updateOverall();
+});
+document.querySelector('[data-reset="p4q2"]').addEventListener('click', ()=>{
+  document.querySelectorAll('#p4q2 input[type="radio"]').forEach(i=>i.checked=false);
+  const badge = document.getElementById('p4q2score'); badge.textContent='';
+  delete state.points.p4q2; updateOverall();
+});
+
+// Panel 5 — Imperatives
+const P5Q1 = [
+  {q:"(Street – to a stranger) “Excuse me.”", opts:["Scusa.","Scusi."], a:1},
+  {q:"(Friend) “Listen, Marco…”", opts:["Senta, Marco…","Senti, Marco…"], a:1},
+  {q:"(Formal) “Take the third on the left.”", opts:["Prendi la terza sulla sinistra.","Prenda la terza sulla sinistra."], a:1},
+  {q:"(Friend) “Turn right.”", opts:["Gira a destra.","Giri a destra."], a:0},
+  {q:"(Formal) “Come in, please.”", opts:["Vieni, per favore.","Venga, per favore."], a:1}
+];
+function renderP5Q1(){
+  const host = document.getElementById('p5q1'); host.innerHTML='';
+  P5Q1.forEach((it,idx)=>{
+    const wrap=document.createElement('div'); wrap.className='card';
+    wrap.innerHTML='<strong>Q'+(idx+1)+':</strong> '+it.q;
+    it.opts.forEach((o,i)=>{
+      const id='p5q1_'+idx+'_'+i;
+      const lab=document.createElement('label'); lab.className='option'; lab.setAttribute('for',id);
+      const input=document.createElement('input'); input.type='radio'; input.name='p5q1_'+idx; input.id=id; input.value=i;
+      const span=document.createElement('span'); span.textContent=o;
+      lab.appendChild(input); lab.appendChild(span); wrap.appendChild(lab);
+    });
+    host.appendChild(wrap);
+  });
+}
+renderP5Q1();
+document.querySelector('[data-check="p5q1"]').addEventListener('click', ()=>{
+  let total=0,correct=0;
+  P5Q1.forEach((it,idx)=>{
+    total++; const ch=document.querySelector('input[name="p5q1_'+idx+'"]:checked');
+    if (ch && Number(ch.value)===it.a) correct++;
+  });
+  const badge=document.getElementById('p5q1score'); badge.textContent=correct+' / '+total; badge.className='badge '+(correct/total>=0.6?'good':'bad');
+  state.points.p5q1={correct,total}; updateOverall();
+});
+document.querySelector('[data-reset="p5q1"]').addEventListener('click', ()=>{
+  document.querySelectorAll('#p5q1 input[type="radio"]').forEach(i=>i.checked=false);
+  const badge=document.getElementById('p5q1score'); badge.textContent='';
+  delete state.points.p5q1; updateOverall();
+});
+
+const P5Q2 = [
+  {q:"(tu) Don’t say this.", opts:["Non dire questo.","Non dici questo."], a:0},
+  {q:"(Lei) Don’t turn left; go straight.", opts:["Non girare a sinistra, va’ dritto.","Non giri a sinistra, vada dritto."], a:1},
+  {q:"(tu) Don’t run.", opts:["Non correre.","Non corri."], a:0},
+  {q:"(Lei) Don’t speak.", opts:["Non parlare.","Non parli."], a:1},
+  {q:"(voi) Go quickly!", opts:["Andate presto!","Va’ presto!"], a:0}
+];
+function renderP5Q2(){
+  const host=document.getElementById('p5q2'); host.innerHTML='';
+  P5Q2.forEach((it,idx)=>{
+    const wrap=document.createElement('div'); wrap.className='card'; wrap.innerHTML='<strong>Q'+(idx+1)+':</strong> '+it.q;
+    it.opts.forEach((o,i)=>{
+      const id='p5q2_'+idx+'_'+i;
+      const lab=document.createElement('label'); lab.className='option'; lab.setAttribute('for',id);
+      const input=document.createElement('input'); input.type='radio'; input.name='p5q2_'+idx; input.id=id; input.value=i;
+      const span=document.createElement('span'); span.textContent=o;
+      lab.appendChild(input); lab.appendChild(span); wrap.appendChild(lab);
+    });
+    host.appendChild(wrap);
+  });
+}
+renderP5Q2();
+document.querySelector('[data-check="p5q2"]').addEventListener('click', ()=>{
+  let total=0,correct=0;
+  P5Q2.forEach((it,idx)=>{
+    total++; const ch=document.querySelector('input[name="p5q2_'+idx+'"]:checked');
+    if (ch && Number(ch.value)===it.a) correct++;
+  });
+  const badge=document.getElementById('p5q2score'); badge.textContent=correct+' / '+total; badge.className='badge '+(correct/total>=0.6?'good':'bad');
+  state.points.p5q2={correct,total}; updateOverall();
+});
+document.querySelector('[data-reset="p5q2"]').addEventListener('click', ()=>{
+  document.querySelectorAll('#p5q2 input[type="radio"]').forEach(i=>i.checked=false);
+  const badge=document.getElementById('p5q2score'); badge.textContent='';
+  delete state.points.p5q2; updateOverall();
+});
+
+// Panel 6 — Reading MCQ
+const P6Q = [
+  {q:"Why is Saturday tricky for families?", opts:["Shops are closed.","Adults work; children are at school.","Everyone travels."], a:1},
+  {q:"A winter Sunday activity:", opts:["Swimming in the sea.","Skiing in the mountains.","Sunbathing in the countryside."], a:1},
+  {q:"During soccer season, fans…", opts:["Go to the stadium or follow by radio.","Don’t care about soccer.","Always watch on TV."], a:0}
+];
+function renderP6Q(){
+  const host=document.getElementById('p6q'); host.innerHTML='';
+  P6Q.forEach((it,idx)=>{
+    const wrap=document.createElement('div'); wrap.className='card'; wrap.innerHTML='<strong>Q'+(idx+1)+':</strong> '+it.q;
+    it.opts.forEach((o,i)=>{
+      const id='p6q_'+idx+'_'+i;
+      const lab=document.createElement('label'); lab.className='option'; lab.setAttribute('for',id);
+      const input=document.createElement('input'); input.type='radio'; input.name='p6q_'+idx; input.id=id; input.value=i;
+      const span=document.createElement('span'); span.textContent=o;
+      lab.appendChild(input); lab.appendChild(span); wrap.appendChild(lab);
+    });
+    host.appendChild(wrap);
+  });
+}
+renderP6Q();
+document.querySelector('[data-check="p6q"]').addEventListener('click', ()=>{
+  let total=0,correct=0;
+  P6Q.forEach((it,idx)=>{
+    total++; const ch=document.querySelector('input[name="p6q_'+idx+'"]:checked');
+    if (ch && Number(ch.value)===it.a) correct++;
+  });
+  const badge=document.getElementById('p6qscore'); badge.textContent=correct+' / '+total; badge.className='badge '+(correct/total>=0.6?'good':'bad');
+  state.points.p6q={correct,total}; updateOverall();
+});
+document.querySelector('[data-reset="p6q"]').addEventListener('click', ()=>{
+  document.querySelectorAll('#p6q input[type="radio"]').forEach(i=>i.checked=false);
+  const badge=document.getElementById('p6qscore'); badge.textContent='';
+  delete state.points.p6q; updateOverall();
+});
+
+// Panel 6 — Short answers
+document.getElementById('p6check2').addEventListener('click', ()=>{
+  const a1 = document.getElementById('p6f1').value.trim().toLowerCase();
+  const a2 = document.getElementById('p6f2').value.trim().toLowerCase();
+  let correct=0,total=2;
+  if (a1.includes('children') || a1.includes('school')) correct++;
+  if (a2.includes('sea') || a2.includes('countryside') || a2.includes('mountain')) correct++;
+  const badge=document.getElementById('p6score2'); badge.textContent=correct+' / '+total; badge.className='badge '+(correct/total>=0.6?'good':'bad');
+  state.points.p6f={correct,total}; updateOverall();
+});
+document.getElementById('p6reset2').addEventListener('click', ()=>{
+  document.getElementById('p6f1').value=''; document.getElementById('p6f2').value='';
+  const badge=document.getElementById('p6score2'); badge.textContent='';
+  delete state.points.p6f; updateOverall();
+});
+
+// Export
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const data = { timestamp: new Date().toISOString(), results: state.points };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='unit6_results.json'; a.click();
+  URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
